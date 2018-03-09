@@ -1,5 +1,6 @@
 ## Autorid ##  
 * Martin Sõmer  
+* Roland Kasenurm  
 
 # 2. kodutöö – kirjutamise mängu täiendamine
 
