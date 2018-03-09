@@ -14,6 +14,7 @@ const TYPER = function () {
   this.word = null
   this.wordMinLength = 5
   this.guessedWords = 0
+  this.score = 0
 
   this.init()
 }
@@ -75,7 +76,8 @@ TYPER.prototype = {
 
       if (this.word.left.length === 0) {
         this.guessedWords += 1
-
+		this.score +=1
+		
         this.generateWord()
       }
 
@@ -99,6 +101,10 @@ Word.prototype = {
     this.ctx.textAlign = 'center'
     this.ctx.font = '140px Courier'
     this.ctx.fillText(this.left, this.canvas.width / 2, this.canvas.height / 2)
+	
+	this.ctx.textAlign = 'left'
+    this.ctx.font = '100px Courier'
+    this.ctx.fillText('Score: '+ typer.score, 100, 100)
   },
 
   removeFirstLetter: function () {
