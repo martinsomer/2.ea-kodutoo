@@ -1,26 +1,70 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>typer</title>
-    <style> 
-      * {
-        margin: 0;
-        padding: 0;
-      }
+    <head>
+        <meta charset="UTF-8">
+        <title>Typer</title>
+        <style> 
+            * {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
 
-      html, body, canvas {
-        width: 100%;
-        height: 100%;
-      }
-      
-      canvas {
-        position: absolute;
-      }
-    </style>
-    <script src="app.js"></script>
-  </head>
-  <body>
-    <canvas></canvas>
-  </body>
+            html, body, canvas {
+                width: 100%;
+                height: 100%;
+            }
+
+            p {
+                text-align: center;
+                font-family: "Courier New";
+                font-size: 2em;
+                font-style: italic;
+                font-variant: normal;
+                font-weight: 100;
+            }
+
+            canvas {
+                position: absolute;
+            }
+
+            #playerName {
+                text-align: center;
+                margin-top: 35vh;
+            }
+
+            input {
+                border-top: none;
+                border-left: none;
+                border-right: none;
+                border-bottom: 2px solid gray;
+                text-align: center;
+                font-family: monospace;
+                font-size: 2em;
+                
+            }
+
+            button {
+                margin-top: 3vh;
+                font-family: monospace;
+                font-size: 2em;
+                padding: 0.1em 0.2em 0.1em 0.2em;
+                border-radius: 10px;
+            }
+
+            *:focus {
+                outline: none;
+            }
+        </style>
+        <script src="app.js"></script>
+    </head>
+    <body>
+        <p>See on kirjutamise mäng.<p>
+        <p>Mängu eesmärk on võimalikult kiiresti ekraanile tekkivaid sõnu ära trükkida.</p>
+        <div id="playerName">
+            <input id="nameField" type="text" placeholder="Nimi">
+            <br>
+            <button onclick="startGame()">Alusta</button>
+        </div>
+    </body>
 </html>
