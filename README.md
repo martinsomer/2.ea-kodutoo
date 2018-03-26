@@ -17,4 +17,4 @@ Mängu eesmärk on võimalikult kiiresti ekraanile tekkivaid sõnu ära trükkid
 
 
 ### Skeem rakenduse tööprotsessist ###  
-![skeem]("Skeem rakenduse tööprotsessist")  
+![skeem](skeem.png "Skeem rakenduse tööprotsessist")  
