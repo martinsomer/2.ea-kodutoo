@@ -18,7 +18,7 @@
             p {
                 text-align: center;
                 font-family: "Courier New";
-                font-size: 2em;
+                font-size: 2vw;
                 font-style: italic;
                 font-variant: normal;
                 font-weight: 100;
@@ -29,8 +29,9 @@
             }
 
             #playerName {
+                position: relative;
                 text-align: center;
-                margin-top: 35vh;
+                margin-top: 30vh;
             }
 
             input {
@@ -40,16 +41,29 @@
                 border-bottom: 2px solid gray;
                 text-align: center;
                 font-family: monospace;
-                font-size: 2em;
+                font-size: 2vw;
                 
             }
 
             button {
                 margin-top: 3vh;
                 font-family: monospace;
-                font-size: 2em;
+                font-size: 2vw;
                 padding: 0.1em 0.2em 0.1em 0.2em;
                 border-radius: 10px;
+            }
+
+            #description {
+                margin-top: 10vh;
+                position: relative;
+            }
+
+            #gameInfo {
+                position: absolute;
+                margin: 0.7vw 0vw 0vw 0.7vw;
+                padding-left: 50vw;
+                border-radius: 50px;
+                padding: 0em 0.4em 0em 0.4em;
             }
 
             *:focus {
@@ -59,8 +73,11 @@
         <script src="app.js"></script>
     </head>
     <body>
-        <p>See on kirjutamise mäng.<p>
-        <p>Mängu eesmärk on võimalikult kiiresti ekraanile tekkivaid sõnu ära trükkida.</p>
+        <button onclick="gameInfo()" id="gameInfo">?</button>
+        <div id="description" style="visibility: hidden;" >
+            <p>See on kirjutamise mäng.<p>
+            <p>Mängu eesmärk on võimalikult kiiresti ekraanile tekkivaid sõnu ära trükkida.</p>
+        </div>
         <div id="playerName">
             <input id="nameField" type="text" placeholder="Nimi">
             <br>

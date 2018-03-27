@@ -4,23 +4,23 @@ const TYPER = function () {
         return TYPER.instance_
     }
     TYPER.instance_ = this
-    
+
     this.WIDTH = window.innerWidth
     this.HEIGHT = window.innerHeight
     this.canvas = null
     this.ctx = null
-    
+
     this.words = []
     this.word = null
     this.wordMinLength = 5
     this.guessedWords = 0
-    
+
     this.score = 0
     this.totalTime = 120 //for debugging
     this.timeLeft = this.totalTime
     this.gameOver = false
-    
-//    this.init()
+
+    //this.init()
 }
 
 window.TYPER = TYPER
@@ -62,7 +62,7 @@ TYPER.prototype = {
         this.word.Draw()
 
         window.addEventListener('keypress', this.keyPressed.bind(this))
-        
+
         gameTimer()
     },
 
@@ -83,26 +83,27 @@ TYPER.prototype = {
 
                 if (this.word.left.length === 0) {
                     this.guessedWords += 1
-                    this.score += 1
+                    this.score += typer.word.word.length
 
                     this.generateWord()
                 }
             } else {
-                if (this.score >= 2) {
-                    this.score -= 2
+                if (this.score >= typer.word.word.length) {
+                    this.score -= typer.word.word.length
                 } else {
                     this.score = 0
                 }
             }
-
             this.word.Draw()
         }
     },
-    
-    spaceBarPressed: function (event) {
+
+    gameOverButtonPressed: function (event) {
         const letter = String.fromCharCode(event.which)
-        if (letter === " ") {
-            restartGame()
+        if (letter === " " && typer.gameOver === true) {
+            location.reload()
+        } else if (letter === "v" && typer.gameOver === true) {
+            typer.word.drawScores()
         }
     }
 }
@@ -117,7 +118,7 @@ const Word = function (word, canvas, ctx) {
 
 Word.prototype = {
     Draw: function () {
-        this.ctx.clearRect(0, 0, this.canvas.width-(this.canvas.width/7), this.canvas.height)
+        this.ctx.clearRect(0, 0, this.canvas.width-450, this.canvas.height)
 
         this.ctx.textAlign = 'center'
         this.ctx.font = '140px Courier'
@@ -127,27 +128,44 @@ Word.prototype = {
         this.ctx.font = '80px Courier'
         this.ctx.fillText('Skoor: '+ typer.score, 50, 100)
     },
-    
+
     drawTimer: function () {
-        this.ctx.clearRect(this.canvas.width-(this.canvas.width/7), 0, this.canvas.width/7, this.canvas.height)
+        this.ctx.clearRect(this.canvas.width-450, 0, 450, this.canvas.height)
         this.ctx.textAlign = 'right'
         this.ctx.font = '80px Courier'
         this.ctx.fillText('Aeg: '+ typer.timeLeft, this.canvas.width-50, 100)
     },
-    
-    drawScore: function () {
+
+    drawEndScreen: function () {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-        
+
         this.ctx.textAlign = 'center'
         this.ctx.font = '140px Courier'
         this.ctx.fillText('Aeg läbi!', this.canvas.width / 2, this.canvas.height / 2 - this.canvas.height / 7)
         this.ctx.font = '80px Courier'
         this.ctx.fillText('Skoor: ' + typer.score, this.canvas.width / 2, this.canvas.height-this.canvas.height / 2.4)
-        this.ctx.fillText('Koht: ' + "??", this.canvas.width / 2, this.canvas.height-this.canvas.height / 3) //
         this.ctx.font = '50px Courier'
-        this.ctx.fillText('[TÜHIK - alusta uuesti]', this.canvas.width / 2, this.canvas.height-this.canvas.height / 4)
+        this.ctx.fillText('[V - vaata edetabelit]', this.canvas.width / 2, this.canvas.height-this.canvas.height / 4)
+        this.ctx.fillText('[TÜHIK - alusta uuesti]', this.canvas.width / 2, this.canvas.height-this.canvas.height / 5)
         
-        window.addEventListener('keypress', TYPER.prototype.spaceBarPressed.bind(this))
+        window.addEventListener('keypress', TYPER.prototype.gameOverButtonPressed.bind(this))
+    },
+
+    drawScores: function () {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+            for (let i = 0, len = JSON.parse(localStorage.getItem('arr')).length; i < len; i++) {
+                if (i < 10) {
+                    this.ctx.textAlign = 'center'
+                    this.ctx.font = '80px Courier'
+                    this.ctx.fillText("#" + (i+1) + ")      " +
+                        "Nimi: " + JSON.parse(localStorage.getItem('arr'))[i][0] +
+                        "   " +
+                        "Skoor: " + JSON.parse(localStorage.getItem('arr'))[i][1],
+                        this.canvas.width / 2, 200 + 100*i)
+                }
+            }
+        this.ctx.font = '50px Courier'
+        this.ctx.fillText('[TÜHIK - alusta uuesti]', this.canvas.width / 2, this.canvas.height-this.canvas.height / 10)
     },
 
     removeFirstLetter: function () {
@@ -156,13 +174,12 @@ Word.prototype = {
 }
 
 /* HELPERS */
-
 function gameTimer () {
     (function timer1() {
         if (typer.timeLeft >= 0) {
             typer.word.drawTimer()
             typer.timeLeft -= 1
-            setTimeout(timer1, 1000);
+            setTimeout(timer1, 1000)
         } else {
             endGame()
         }
@@ -171,23 +188,37 @@ function gameTimer () {
 
 function endGame () {
     typer.gameOver = true
-    typer.word.drawScore()
+    typer.word.drawEndScreen()
+    saveScore(name,typer.score)
 }
 
-function restartGame () {
-    typer.wordMinLength = 5
-    typer.guessedWords = 0
-    typer.score = 0
-    typer.timeLeft = typer.totalTime
-    typer.gameOver = false
-    document.querySelector('body').innerHTML =
-        "<p>See on kirjutamise mäng.<p>" +
-        "<p>Mängu eesmärk on võimalikult kiiresti ekraanile tekkivaid sõnu ära trükkida.</p>" +
-       "<div id=\"playerName\">" + 
-        "<input id=\"nameField\" type=\"text\" placeholder=\"Nimi\">" +
-        "<br>" +
-        "<button onclick=\"startGame()\">Alusta</button>" +
-        "</div>"
+//the JSON code was shamelessly copied from
+//https://github.com/nsalong/2.ea-kodutoo/blob/master/app.js#L301
+function saveScore (playerName, playerScore) {
+    arr = []
+    if (window.localStorage.length == 0) {
+        player = [playerName,playerScore]
+        arr.push(player)
+        localStorage.setItem('arr', JSON.stringify(arr))
+    } else {
+        let stored = JSON.parse(localStorage.getItem('arr'))
+        let player2 = [playerName,playerScore]
+        stored.push(player2)
+
+        //sort
+        let length = stored.length
+        for (let i=0; i<length; i++) {
+            for (let j=0; j<(length-i-1); j++) {
+                if (stored[j][1] < stored[j+1][1]) {
+                    let tmp = stored[j]
+                    stored[j] = stored[j+1]
+                    stored[j+1] = tmp
+                }
+            }
+        }
+
+        localStorage.setItem('arr', JSON.stringify(stored))
+    }
 }
 
 function structureArrayByWordLength (words) {
@@ -199,16 +230,27 @@ function structureArrayByWordLength (words) {
 
             tempArray[wordLength].push(words[i])
     }
-
     return tempArray
+}
+
+function gameInfo () {
+    if (document.querySelector('#description').style.visibility === "hidden") {
+           document.querySelector('#description').style.visibility = "visible"
+    } else {
+        document.querySelector('#description').style.visibility = "hidden"
+    }
 }
 
 let name = ""
 function startGame () {
-    name = document.querySelector('#nameField').value
-    console.log ("Nimi: " + name)
-    document.querySelector('body').innerHTML = "<canvas></canvas>"
-    const typer = new TYPER()
-    window.typer = typer
-    typer.init()
+
+    if (document.querySelector('#nameField').value != "") {
+        name = document.querySelector('#nameField').value
+        document.querySelector('body').innerHTML = "<canvas></canvas>"
+        const typer = new TYPER()
+        window.typer = typer
+        typer.init()
+    } else {
+        alert("Nime väli ei tohi olla tühi.")
+    }
 }
